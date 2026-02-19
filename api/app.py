@@ -89,6 +89,24 @@ def insert_unfollow(user_unfollow):
        """), user_unfollow)
        conn.commit()
        return result.rowcount
+# 전체 유저 조회 기능
+def get_all_users():
+   with current_app.database.connect() as conn:
+       users = conn.execute(text("""
+           SELECT
+               id,
+               name,
+               email,
+               profile
+           FROM users
+       """)).fetchall()
+
+   return [{
+       'id'      : user[0],
+       'name'    : user[1],
+       'email'   : user[2],
+       'profile' : user[3]
+   } for user in users]
 
 # 이건 모르겠다.
 # Flask 서버를 만드는 공장 함수
@@ -143,7 +161,8 @@ def create_app(test_config=None):
         payload = request.json
         insert_follow(payload)
         return '', 200
-
+    
+    # 전체 유저 조회 라우트
     @app.route('/user/<int:user_id>', methods=['GET'])
     def get_user_info(user_id):
         user = get_user(user_id)
@@ -151,12 +170,24 @@ def create_app(test_config=None):
             return '사용자가 존재하지 않습니다.', 404
         return jsonify(user)
 
+    @app.route('/tweet/<int:tweet_id>', methods=['DELETE'])
+    def delete_tweet_endpoint(tweet_id):
+        rows = delete_tweet(tweet_id)
+        if rows == 0:
+            return '트윗이 존재하지 않습니다.', 404
+        return '', 200
+
+
     # 언팔 로직
     @app.route('/unfollow', methods=['POST'])
     def unfollow():
         payload = request.json
         insert_unfollow(payload)
         return '', 200
+    # 전체 유저 조회 
+    @app.route('/users', methods=['GET'])
+    def user_list():
+        return jsonify(get_all_users())
 
     # 타임라인 로직
     @app.route('/timeline/<int:user_id>', methods=['GET'])
