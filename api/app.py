@@ -78,6 +78,15 @@ def insert_follow(user_follow):
        """), user_follow)
        conn.commit()
        return result.rowcount
+# 트윗삭제
+def delete_tweet(tweet_id):
+   with current_app.database.begin() as conn:
+       result = conn.execute(text("""
+           DELETE FROM tweets
+           WHERE id = :tweet_id
+       """), {'tweet_id': tweet_id})
+       return result.rowcount
+
 
 # 언팔기능
 def insert_unfollow(user_unfollow):
@@ -169,7 +178,7 @@ def create_app(test_config=None):
         if user is None:
             return '사용자가 존재하지 않습니다.', 404
         return jsonify(user)
-
+    # 트윗삭제 라우트
     @app.route('/tweet/<int:tweet_id>', methods=['DELETE'])
     def delete_tweet_endpoint(tweet_id):
         rows = delete_tweet(tweet_id)
