@@ -109,14 +109,14 @@ def create_app(test_config=None):
    @app.route("/ping", methods=['GET'])
    def ping():
        return "pong"
-
+# 회원가입 로직
    @app.route("/sign-up", methods=['POST'])
    def sign_up():
        new_user = request.json
        new_user_id = insert_user(new_user)
        new_user = get_user(new_user_id)
        return jsonify(new_user)
-
+# 트윗글 로직
    @app.route('/tweet', methods=['POST'])
    def tweet():
        user_tweet = request.json
@@ -128,26 +128,42 @@ def create_app(test_config=None):
        insert_tweet(user_tweet)
 
        return '', 200
-
+# 팔로우 로직
    @app.route('/follow', methods=['POST'])
    def follow():
        payload = request.json
        insert_follow(payload)
 
        return '', 200
-
+# 언팔 로직
    @app.route('/unfollow', methods=['POST'])
    def unfollow():
        payload = request.json
        insert_unfollow(payload)
 
        return '', 200
-
+# 타임라인 로직
    @app.route('/timeline/<int:user_id>', methods=['GET'])
    def timeline(user_id):
        return jsonify({
            'user_id'  : user_id,
            'timeline' : get_timeline(user_id)
        })
+   
+# 타임라인 가져오는 함수
+def get_timeline(user_id):
+    with current_app.database.connect() as conn:
+        rows = conn.execute(text("""
+            SELECT user_id, tweet
+            FROM tweets
+            WHERE user_id = :user_id
+                OR user_id IN (
+                    SELECT follow_user_id
+                    FROM users_follow_list
+                    WHERE user_id = :user_id
+                )
+        """), {"user_id": user_id}).fetchall()
 
-   return app
+        # 반환제이슨 파일 느낌으로다가 하고 
+        # 저 안에가 그 뭐시기냐 그 튜플처럼되있데 그래서 인덱스 느낌으로 했데 ㅇㅇ
+    return [{"user_id": r[0], "tweet": r[1]} for r in rows]
