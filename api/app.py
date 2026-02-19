@@ -164,6 +164,6 @@ def get_timeline(user_id):
                 )
         """), {"user_id": user_id}).fetchall()
 
-        # 반환제이슨 파일 느낌으로다가 하고 
-        # 저 안에가 그 뭐시기냐 그 튜플처럼되있데 그래서 인덱스 느낌으로 했데 ㅇㅇ
+        # 반환 제이슨 파일 느낌으로다가 하고 
+        # 저 안에가 그 뭐시기냐 그 튜플처럼되있데 그래서 인덱스 느낌으로 했데
     return [{"user_id": r[0], "tweet": r[1]} for r in rows]
