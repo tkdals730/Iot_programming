@@ -144,6 +144,13 @@ def create_app(test_config=None):
         insert_follow(payload)
         return '', 200
 
+    @app.route('/user/<int:user_id>', methods=['GET'])
+    def get_user_info(user_id):
+        user = get_user(user_id)
+        if user is None:
+            return '사용자가 존재하지 않습니다.', 404
+        return jsonify(user)
+
     # 언팔 로직
     @app.route('/unfollow', methods=['POST'])
     def unfollow():
