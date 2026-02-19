@@ -29,6 +29,18 @@ def insert_user(user):
        conn.commit()
        return result.lastrowid
 
+# 유저 정보 변경  이름이랑 프로필
+def update_user(user):
+   with current_app.database.connect() as conn:
+       result = conn.execute(text("""
+           UPDATE users 
+           SET name = :name, profile = :profile 
+           WHERE id = :user_id
+       """), user)
+       conn.commit()
+       return result.rowcount
+
+   
 # 데이터베이스에 연결하고 유저 조회
 def get_user(user_id):
    with current_app.database.connect() as conn:
@@ -151,6 +163,7 @@ def create_app(test_config=None):
         new_user_id = insert_user(new_user)
         new_user = get_user(new_user_id)
         return jsonify(new_user)
+    
 
     # 트윗글 로직
     @app.route('/tweet', methods=['POST'])
@@ -171,13 +184,26 @@ def create_app(test_config=None):
         insert_follow(payload)
         return '', 200
     
-    # 전체 유저 조회 라우트
+    # 유저 조회 라우트
     @app.route('/user/<int:user_id>', methods=['GET'])
     def get_user_info(user_id):
         user = get_user(user_id)
         if user is None:
             return '사용자가 존재하지 않습니다.', 404
         return jsonify(user)
+    
+    @app.route('/user/<int:user_id>', methods=['PUT'])
+    def update_user_info(user_id):
+        data = request.json
+        data['user_id'] = user_id  
+
+        rows = update_user(data)
+
+        if rows == 0:
+            return '사용자가 존재하지 않습니다.', 404
+
+        return jsonify(get_user(user_id))
+
     # 트윗삭제 라우트
     @app.route('/tweet/<int:tweet_id>', methods=['DELETE'])
     def delete_tweet_endpoint(tweet_id):
