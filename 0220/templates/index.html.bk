@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>센서 데이터</title>
+
+</head>
+
+<body>
+
+    <h1>실시간 센서 데이터</h1>
+
+    <p>온도: {{ sensor.temperature }} °C</p>
+
+    <p>습도: {{ sensor.humidity }} %</p>
+
+</body>
+
+</html>

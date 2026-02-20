@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+
+<html>
+
+<head><title>센서 데이터</title></head>
+
+<body>
+    <h1>센서 기록</h1>
+    <p>페이지 로딩 시각: {{ now }}</p>
+    <table border="1">
+        <tr>
+            <th>번호</th>
+            <th>온도 (°C)</th>
+            <th>습도 (%)</th>
+        </tr>
+            {% if not records %}
+
+            <p>데이터 없음</p>
+
+            {% else %}
+
+            {% for row in records %}
+        <tr>
+            <td>{{ loop.index0 }}</td>
+            <td>{{ row.temperature }}</td>
+            <td>{{ row.humidity }}</td>
+            <td>
+                {% if row.temperature >= 30 %}
+                    🔴 더움
+                {% elif row.temperature >= 22 %}
+                    🟡 보통
+                {% else %}
+                    🟢 쾌적
+                {% endif %}
+            </td>
+
+
+        </tr>
+        {% endfor %}
+        {% endif %}
+    </table>
+
+</body>
+
+</html>
