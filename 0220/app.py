@@ -67,12 +67,21 @@ def get_records(limit=10):
     cursor.close()
     conn.close()
     return rows
-
+# ── 전체 개수 구하는 함수 ─────────────────────────────
+def get_total_count():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM sensor_data")
+    (cnt,) = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return cnt
 # ── 라우트 ──────────────────────────────────
 @app.route('/')
 def index():
-    records = get_records()
-    return render_template("index.html", records=records)
+    records = get_records(limit=10)
+    total_count = get_total_count()
+    return render_template("index.html", records=records, total_count=total_count)
 
 @app.route('/collect')
 def collect():
@@ -90,8 +99,6 @@ def auto_collect(interval=10):
             save_to_db(data["temperature"], data["humidity"])
             print(f"저장됨: {data['temperature']}°C, {data['humidity']}%")
         time.sleep(interval)
-
-# if __name__ == '__main__': 바로 위에 추가
 
 thread = threading.Thread(target=auto_collect, args=(10,), daemon=True)
 
