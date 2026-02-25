@@ -99,7 +99,7 @@ def products_arduino():
         humi = request.args.get("humidity", type=float)
     else:
         # POST: body "temperature=26&humidity=70" (x-www-form-urlencoded)
-        # POST 요청이 오면 저거를 그 뭐시기 값으로 바꿔서 저장
+        # POST 요청이 오면 값으로 바꿔서 저장
         temp = request.form.get("temperature", type=float)
         humi = request.form.get("humidity", type=float)
 
@@ -122,6 +122,7 @@ def auto_collect(interval=10):
 # 오토컬렉팅? 임시 주석
 # 주기적으로 새로고침인가?
 # 지금은 잠시 주석처리함
+# 아닌거같은데
 # thread = threading.Thread(target=auto_collect, args=(10,), daemon=True)
 # thread.start()
 

@@ -8,10 +8,10 @@ except ImportError :
     from urllib2 import HTTPError, URLError
 
 # impoer json
-deviceIp = "<장치 IP>"
+deviceIp = "192.168.0.21"
 portnum = "80"
 
-base_url = "htpp://" + deviceIp + ":" + portnum
+base_url = "http://" + deviceIp + ":" + portnum
 events_url = base_url + "/events"
 
 app = Flask(__name__, template_folder=".")
@@ -26,11 +26,11 @@ def getevents():
         print("HTTP error: %d" % e.code)
     except URLError as e:
         print("Network error: %s" % e.reason.args[1])
-        return data
+    return data
     
 @app.route('/')
 def dht22chart():
     return render_template("dhtchart.html")
 
 if __name__ == '__main__':
-    app.run(host = "192.168.0.199", port= 80)
+    app.run(host = "192.168.0.199", port= 5000)
