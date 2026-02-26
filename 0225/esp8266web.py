@@ -8,8 +8,8 @@ except ImportError :
     from urllib2 import HTTPError, URLError
 
 # impoer json
-deviceIp = "192.168.0.21"
-portnum = "80"
+deviceIp = "192.168.0.40"
+portnum = "8080"
 
 base_url = "http://" + deviceIp + ":" + portnum
 events_url = base_url + "/events"
