@@ -33,7 +33,7 @@ def publish(client: mqtt_client.Client):
     msg_count = 1
     while True:
         time.sleep(1)
-        msg = f"messages: {msg_count}"
+        msg = f"message: {msg_count}"
         result = client.publish(topic, msg)
         # result: [0, 1]
         status = result[0]
